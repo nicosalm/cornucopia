@@ -7,6 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
+import os
+
+dir_path = os.path.dirname(os.path.realpath(__file__)) + "/"
 
 
 class CropPricePredictor:
@@ -17,7 +20,10 @@ class CropPricePredictor:
         self.model = model
         self.df = df
 
-    def predict(self, date: str, crop: int):
+    def predict(self, date: str, crop):
+
+        if crop not in [1, 2, 3, 4]:
+            raise ValueError("Crop must be in range [1, 4] and be an integer")
 
         print("\n\n\n\nLoading complete...\n")
         # date: YYYY-MM-DD
@@ -30,7 +36,7 @@ class CropPricePredictor:
         # predict the price
         price = self.model.predict(udf_formatted)
 
-        with open('src/app/python/out/price_prediction.txt', 'w') as f:
+        with open(dir_path + 'out/predicted_price.txt', 'w') as f:
             # write the metrics to the file
             f.write('Predicted_Price:' + str(price) + '\n')
         f.close()
@@ -241,7 +247,7 @@ class CropPricePredictor:
         test_r2 = r2_score(y_test, y_test_pred)
 
         # save the metrics to a file in the out folder
-        with open('src/app/python/out/metrics.txt', 'w') as f:
+        with open(dir_path + 'out/metrics.txt', 'w') as f:
             # write the metrics to the file
             f.write('Training_RMSE:' + str(train_rmse) + '\n')
             f.write('Training_MAE:' + str(train_mae) + '\n')
@@ -249,7 +255,6 @@ class CropPricePredictor:
             f.write('Test_RMSE:' + str(test_rmse) + '\n')
             f.write('Test_MAE:' + str(test_mae) + '\n')
             f.write('Test_R2:' + str(test_r2) + '\n')
-
         f.close()
 
         # Data visualization
@@ -264,7 +269,7 @@ class CropPricePredictor:
         p = np.poly1d(z)
         plt.plot(y_test, p(y_test), color='red')
         # save the plot to a file in the plots folder
-        plt.savefig('src/app/python/out/actual_vs_predicted.png')
+        plt.savefig(dir_path + 'out/actual_vs_predicted.png')
 
         # plot the residuals
         plt.figure(figsize=(10, 10))
@@ -276,14 +281,14 @@ class CropPricePredictor:
         plt.hlines(y=0, xmin=y_test_pred.min(),
                    xmax=y_test_pred.max(), color='red')
         # save the plot to a file in the plots folder
-        plt.savefig('src/app/python/out/residuals.png')
+        plt.savefig(dir_path + 'out/predicted_vs_residuals.png')
 
     # main function
 
     def get_model(self):
 
-        df = self.merge_csv('src/app/python/data/corn-price-data.csv', 'src/app/python/data/oats-price-data.csv',
-                            'src/app/python/data/soybeans-price-data.csv', 'src/app/python/data/wheat-price-data.csv')
+        df = self.merge_csv(dir_path + 'data/corn-price-data.csv', dir_path + 'data/oats-price-data.csv',
+                            dir_path + 'data/soybeans-price-data.csv', dir_path + 'data/wheat-price-data.csv')
 
         X_scaled, y = self.preprocess(df)
 
@@ -296,5 +301,22 @@ class CropPricePredictor:
         return lasso, df
 
 
-# now that we have a model, we can use it to make predictions
-# we will make a function in which the user provides a YYYY-MM-DD date and a crop identifier number, and the function will return the predicted price of that crop on that date
+def test():
+    c = CropPricePredictor()
+
+    date = '1980-01-01'
+    crop = 1  # 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
+
+    # run the predict() function
+    out = c.predict(date, crop)
+
+    # strip the [], and round to two decimal places, add USD to the end
+    out = str(out).strip('[]')
+    out = round(float(out), 2)
+    out = str(out) + " USD"
+
+    # this is the output:
+    print("Price:" + out)
+
+
+test()
