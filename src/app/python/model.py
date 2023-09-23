@@ -22,7 +22,7 @@ class CropPricePredictor:
 
     def predict(self, date: str, crop):
 
-        if crop not in [1, 2, 3, 4]:
+        if crop not in [1, 2, 3, 4]:  # 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
             raise ValueError("Crop must be in range [1, 4] and be an integer")
 
         print("\n\n\n\nLoading complete...\n")
@@ -317,6 +317,3 @@ def test():
 
     # this is the output:
     print("Price:" + out)
-
-
-test()
