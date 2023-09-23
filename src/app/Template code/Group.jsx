@@ -1,6 +1,7 @@
 import DeliveryManager from "./DeliveryManager";
-
+import React, { useState } from "react";
 export default function Group(group) {
+  const [state, setState] = useState(group);
   return (
     <div>
       <h1>
@@ -9,6 +10,7 @@ export default function Group(group) {
           group.GroupID
         }{" "}
       </h1>
+      <button onClick = {setState} > rerender Group.jsx </button>
       <DeliveryManager data={group} />
     </div>
   );
