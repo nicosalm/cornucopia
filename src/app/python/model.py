@@ -12,23 +12,87 @@ import matplotlib.pyplot as plt
 class CropPricePredictor:
 
     def __init__(self):
-        self.model = self.get_model()  # returns a trained model
+        # sets self.model to the trained model
+        model, df = self.get_model()
+        self.model = model
+        self.df = df
 
-    def predict(self, date, crop):
+    def predict(self, date: str, crop: int):
 
         print("\n\n\n\nLoading complete...\n")
         # date: YYYY-MM-DD
         # crop: 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
 
-        # run the preprocess() function on the input data
-        # preprocess() returns a dataframe with the input data in the correct format
-
         # make a df with the input data and then feed it into preprocess()
-        df = pd.DataFrame({'date': [date], 'crop': [crop]})
-        df_preprocessed = self.preprocess(df)
-        print(df_preprocessed)
+        udf = pd.DataFrame({'date': [date], 'crop': [crop]})
+        udf_formatted = self.format_user_input(date, crop)
 
-    # parameters: up to four csv files containing the data for each crop
+        # predict the price
+        price = self.model.predict(udf_formatted)
+
+        with open('src/app/python/out/price_prediction.txt', 'w') as f:
+            # write the metrics to the file
+            f.write('Predicted_Price:' + str(price) + '\n')
+        f.close()
+
+        return price
+
+    def format_user_input(self, date: str, crop: int):
+        # this is a helper function for the predict() function, it will be similar to
+        # but different from the preprocess() function
+
+        # if crop isn't formatted YYYY-MM-DD, then format it or raise an error
+        # if crop isn't 1, 2, 3, or 4, then raise an error
+        if crop not in [1, 2, 3, 4]:
+            raise ValueError("Crop must be in range [1, 4]")
+
+        if len(date) != 10:
+            raise ValueError("Date must be in the format YYYY-MM-DD")
+
+        # we can do these automatically
+        udf = pd.DataFrame({'date': [date], 'crop': [crop]})
+        udf['date'] = pd.to_datetime(udf['date'])
+        udf['year'] = udf['date'].dt.year
+        udf['month'] = udf['date'].dt.month
+        udf['day'] = udf['date'].dt.day
+        udf['day_of_week'] = udf['date'].dt.dayofweek
+        udf['day_of_year'] = udf['date'].dt.dayofyear
+        udf['is_spring'] = udf['month'].isin([3, 4, 5])
+        udf['is_summer'] = udf['month'].isin([6, 7, 8])
+        udf['is_fall'] = udf['month'].isin([9, 10, 11])
+        udf['is_winter'] = udf['month'].isin([12, 1, 2])
+        udf = udf.drop(columns=['date'])
+
+        # for the remaining features, we will select lag, moving average, and exponential moving average values
+        # based on historical training data and the date provided by the user
+
+        # find the closest date in the training data to the date provided by the user
+
+        # closest = self.df.iloc[(self.df['date']-date).abs().argsort()[:1]]
+
+        year, month, day = udf['year'][0], udf['month'][0], udf['day'][0]
+        crop = udf['crop'][0]
+
+        closest = self.df[(self.df['year'] == year) & (
+            self.df['month'] == month) & (self.df['crop'] == crop)]
+
+        closest = closest.iloc[(closest['day']-day).abs().argsort()[:1]]
+
+        # take these values and add them to the dataframe
+        udf['price_lag_1'] = closest['price_lag_1'].values[0].astype(float)
+        udf['price_lag_3'] = closest['price_lag_3'].values[0].astype(float)
+        udf['price_lag_6'] = closest['price_lag_6'].values[0].astype(float)
+        udf['price_lag_12'] = closest['price_lag_12'].values[0].astype(float)
+        udf['price_ma_1'] = closest['price_ma_1'].values[0].astype(float)
+        udf['price_ma_3'] = closest['price_ma_3'].values[0].astype(float)
+        udf['price_ma_6'] = closest['price_ma_6'].values[0].astype(float)
+        udf['price_ma_12'] = closest['price_ma_12'].values[0].astype(float)
+        udf['price_ema_1'] = closest['price_ema_1'].values[0].astype(float)
+        udf['price_ema_3'] = closest['price_ema_3'].values[0].astype(float)
+        udf['price_ema_6'] = closest['price_ema_6'].values[0].astype(float)
+        udf['price_ema_12'] = closest['price_ema_12'].values[0].astype(float)
+
+        return udf
 
     def merge_csv(self, csv_file1, csv_file2, csv_file3=None, csv_file4=None):
         # we are combining the data from the four csv files into one dataframe,
@@ -176,19 +240,17 @@ class CropPricePredictor:
         test_mae = mean_absolute_error(y_test, y_test_pred)
         test_r2 = r2_score(y_test, y_test_pred)
 
-        # print the error metrics
-        print("Training RMSE:", train_rmse)
-        print("Test RMSE:", test_rmse)
+        # save the metrics to a file in the out folder
+        with open('src/app/python/out/metrics.txt', 'w') as f:
+            # write the metrics to the file
+            f.write('Training_RMSE:' + str(train_rmse) + '\n')
+            f.write('Training_MAE:' + str(train_mae) + '\n')
+            f.write('Training_R2:' + str(train_r2) + '\n')
+            f.write('Test_RMSE:' + str(test_rmse) + '\n')
+            f.write('Test_MAE:' + str(test_mae) + '\n')
+            f.write('Test_R2:' + str(test_r2) + '\n')
 
-        print("\nTraining MAE:", train_mae)
-        print("Test MAE:", test_mae)
-
-        print("\nTraining R²:", train_r2)
-        print("Test R²:", test_r2)
-
-        # let's also print the coefficients and intercept
-        print("\nCoefficients:", lasso.coef_)
-        print("Intercept:", lasso.intercept_)
+        f.close()
 
         # Data visualization
         # plot the predicted vs actual values for the test set and make the plot look nice
@@ -202,7 +264,7 @@ class CropPricePredictor:
         p = np.poly1d(z)
         plt.plot(y_test, p(y_test), color='red')
         # save the plot to a file in the plots folder
-        plt.savefig('plots/actual_vs_predicted.png')
+        plt.savefig('src/app/python/out/actual_vs_predicted.png')
 
         # plot the residuals
         plt.figure(figsize=(10, 10))
@@ -214,14 +276,14 @@ class CropPricePredictor:
         plt.hlines(y=0, xmin=y_test_pred.min(),
                    xmax=y_test_pred.max(), color='red')
         # save the plot to a file in the plots folder
-        plt.savefig('plots/residuals.png')
+        plt.savefig('src/app/python/out/residuals.png')
 
     # main function
 
     def get_model(self):
 
-        df = self.merge_csv('data/corn-price-data.csv', 'data/oats-price-data.csv',
-                            'data/soybeans-price-data.csv', 'data/wheat-price-data.csv')
+        df = self.merge_csv('src/app/python/data/corn-price-data.csv', 'src/app/python/data/oats-price-data.csv',
+                            'src/app/python/data/soybeans-price-data.csv', 'src/app/python/data/wheat-price-data.csv')
 
         X_scaled, y = self.preprocess(df)
 
@@ -231,7 +293,7 @@ class CropPricePredictor:
 
         # now, we can use the model to make predictions
         # let's do that in another function but for now we will just return the model
-        return lasso
+        return lasso, df
 
 
 # now that we have a model, we can use it to make predictions
