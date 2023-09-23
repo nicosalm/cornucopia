@@ -3,25 +3,53 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --thing: hsl(99, 15%, 56%);
+  --text-color: hsl(0, 0%, 98%); /* fafafa */
+  --secondary: hsl(99, 15%, 56%); /* #8aa07e */
+  --primary-start: hsl(171, 45%, 18%); /* #19433c */
+  --primary: hsl(171, 36%, 15%); /* 183430 */
+  
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: var(--text-color);
   background: linear-gradient(
-      to bottom,
+      to bottom right,
       transparent,
-      rgb(var(--background-end-rgb))
+      var(--primary)
     )
-    rgb(var(--background-start-rgb));
+    var(--primary-start);
+}
+
+
+.site-text-bg {
+  background-color: var(--text-color);
+}
+
+.site-primary-bg {
+  background-color: var(--primary);
+}
+
+.site-secondary-bg {
+  background-color: var(--secondary);
+}
+
+.site-primary {
+  color: var(--primary);
+}
+
+.site-secondary {
+  color: var(--secondary);
+}
+
+.site-text {
+  color: var(--text-color);
 }
