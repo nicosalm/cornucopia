@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Geologica, Lexend_Deca } from "next/font/google";
-import Nav from "@/app/nav";
+import Nav from "@/components/nav";
 
 // body font
 const geologica = Geologica({ subsets: ["latin"] });
