@@ -1,3 +1,4 @@
+// TODO phase this file out in favor of mongoose
 import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
@@ -23,6 +24,8 @@ async function connectToDatabase() {
  * Utility function to query all groups a user is associated to.
  * @param {*} user_id the uuid of the user
  */
-async function getGroupsAssociatedWithUser(user_id) {}
+async function getGroupsAssociatedWithUser(user_id) {
+
+}
 
 export default { getGroupsAssociatedWithUser, connectToDatabase };

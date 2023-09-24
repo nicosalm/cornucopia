@@ -54,6 +54,10 @@ body {
   color: var(--secondary);
 }
 
+.site-secondary-border {
+  border-color: var(--secondary);
+}
+
 .site-text {
   color: var(--text-color);
 }

@@ -1,18 +1,15 @@
 "use client";
-
 import { useState } from "react";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [user_name, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // TODO login stuff
     // console.log(`logging in w/ email ${email}, password ${password}`);
-    
-    
   };
 
   return (
@@ -26,8 +23,8 @@ export default function Login() {
           Email:
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={user_name}
+            onChange={(e) => setUsername(e.target.value)}
             className="block w-full site-text-bg rounded-md mt-2 p-3 text-s text-black"
           />
         </label>
