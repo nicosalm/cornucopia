@@ -1,32 +1,31 @@
-# Flask API to serve the model
+from pickle import load
+import numpy as np
+import pandas as pd
+import os
+import model
+import chart
+import asyncio
+import pickle
+import datetime
 
-from flask import Flask, request, jsonify
-from flask_restful import Api, Resource
-from model import CropPricePredictor
+dir_path = os.path.dirname(os.path.realpath(__file__)) + "/"
 
-app = Flask(__name__)
-api = Api(app)
+'''
+The overall flow of the application is as follows:
 
+1. Spin up the model (if a pickled model exists, load it, otherwise train a new model)
+2. Generate both the pie chart and the line chart (chart.py)
 
-class Predict(Resource):
-    def post(self):
-        # get the data from the POST request
-        data = request.get_json()
-        date = data['date']
-        crop = data['crop']
-        crop = int(crop)
-
-        predictor = CropPricePredictor()
-        predicted_price = predictor.predict(date, crop)
-
-        # run the model and make a prediction
-        # predicted_price = CropPricePredictor.predict(date, crop)
-
-        # return jsonify({'predicted_price': predicted_price})
+Because these things take time, we want to do them asynchronously. This is where asyncio comes in.
+'''
 
 
-# add the Predict resource to the API under the route /predict
-api.add_resource(Predict, '/predict')
+async def main():
+    # Load the pickled model if it exists
+    regressor = await model.CropPriceLassoRegressor.create()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Now we have a model, we can generate the charts
+    await chart.generate_charts(regressor, 1)
+
+
+asyncio.run(main())

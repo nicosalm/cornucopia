@@ -8,19 +8,37 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import os
-
 dir_path = os.path.dirname(os.path.realpath(__file__)) + "/"
 
 
-class CropPricePredictor:
+class CropPriceLassoRegressor:
 
     def __init__(self):
-        # sets self.model to the trained model
-        model, df = self.get_model()
-        self.model = model
-        self.df = df
+        self.model = None
+        self.df = None
+        self.pickle_path = None
 
-    def predict(self, date: str, crop):
+    @classmethod
+    async def create(cls):
+        self = cls()
+        self.model, self.df = await self.spin_up()
+        return self
+
+    async def spin_up(self):
+
+        df = self.merge_csv(dir_path + 'data/corn-price-data.csv', dir_path + 'data/oats-price-data.csv',
+                            dir_path + 'data/soybeans-price-data.csv', dir_path + 'data/wheat-price-data.csv')
+
+        X_scaled, y = self.preprocess(df)
+
+        lasso, X_train, X_test, y_train, y_test = self.train_model(X_scaled, y)
+
+        self.test_model(lasso, X_train, X_test, y_train, y_test)
+
+        # now, we can use the model to make predictions
+        return lasso, df
+
+    def predict(self, date: str, crop: int):
 
         if crop not in [1, 2, 3, 4]:  # 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
             raise ValueError("Crop must be in range [1, 4] and be an integer")
@@ -48,9 +66,6 @@ class CropPricePredictor:
         # but different from the preprocess() function
 
         # if crop isn't formatted YYYY-MM-DD, then format it or raise an error
-        # if crop isn't 1, 2, 3, or 4, then raise an error
-        if crop not in [1, 2, 3, 4]:
-            raise ValueError("Crop must be in range [1, 4]")
 
         if len(date) != 10:
             raise ValueError("Date must be in the format YYYY-MM-DD")
@@ -75,6 +90,11 @@ class CropPricePredictor:
         # find the closest date in the training data to the date provided by the user
 
         # closest = self.df.iloc[(self.df['date']-date).abs().argsort()[:1]]
+
+        if self.df is None:
+            # Handle the error, for example by raising a more descriptive error or returning a default value
+            raise ValueError(
+                "The dataframe 'self.df' has not been initialized!")
 
         year, month, day = udf['year'][0], udf['month'][0], udf['day'][0]
         crop = udf['crop'][0]
@@ -182,7 +202,7 @@ class CropPricePredictor:
         df = df.dropna()
 
         # return the dataframe
-        # columns: [ price, crop, year, month, day, day_of_week, day_of_year is_spring, is_summer,
+        # columns: [price, crop, year, month, day, day_of_week, day_of_year is_spring, is_summer,
         # is_fall, is_winter, price_lag_1, price_lag_3, price_lag_6, price_lag_12, price_ma_1,
         # price_ma_3, price_ma_6, price_ma_12, price_ema_1, price_ema_3, price_ema_6, price_ema_12 ]
 
@@ -257,63 +277,52 @@ class CropPricePredictor:
             f.write('Test_R2:' + str(test_r2) + '\n')
         f.close()
 
-        # Data visualization
-        # plot the predicted vs actual values for the test set and make the plot look nice
-        plt.figure(figsize=(10, 10))
-        plt.scatter(y_test, y_test_pred, s=20)
-        plt.xlabel('Actual Price')
-        plt.ylabel('Predicted Price')
-        plt.title('Actual vs Predicted Price')
-        # smooth line
-        z = np.polyfit(y_test, y_test_pred, 1)
-        p = np.poly1d(z)
-        plt.plot(y_test, p(y_test), color='red')
-        # save the plot to a file in the plots folder
-        plt.savefig(dir_path + 'out/actual_vs_predicted.png')
+        # # Data visualization
+        # # plot the predicted vs actual values for the test set and make the plot look nice
+        # plt.figure(figsize=(10, 10))
+        # plt.scatter(y_test, y_test_pred, s=20)
+        # plt.xlabel('Actual Price')
+        # plt.ylabel('Predicted Price')
+        # plt.title('Actual vs Predicted Price')
+        # # smooth line
+        # z = np.polyfit(y_test, y_test_pred, 1)
+        # p = np.poly1d(z)
+        # plt.plot(y_test, p(y_test), color='red')
+        # # save the plot to a file in the plots folder
+        # plt.savefig(dir_path + 'out/actual_vs_predicted.png')
 
-        # plot the residuals
-        plt.figure(figsize=(10, 10))
-        plt.scatter(y_test_pred, y_test_pred - y_test, s=20)
-        plt.xlabel('Predicted Price')
-        plt.ylabel('Residuals')
-        plt.title('Predicted vs Residuals')
-        # residual lines
-        plt.hlines(y=0, xmin=y_test_pred.min(),
-                   xmax=y_test_pred.max(), color='red')
-        # save the plot to a file in the plots folder
-        plt.savefig(dir_path + 'out/predicted_vs_residuals.png')
-
-    # main function
-
-    def get_model(self):
-
-        df = self.merge_csv(dir_path + 'data/corn-price-data.csv', dir_path + 'data/oats-price-data.csv',
-                            dir_path + 'data/soybeans-price-data.csv', dir_path + 'data/wheat-price-data.csv')
-
-        X_scaled, y = self.preprocess(df)
-
-        lasso, X_train, X_test, y_train, y_test = self.train_model(X_scaled, y)
-
-        self.test_model(lasso, X_train, X_test, y_train, y_test)
-
-        # now, we can use the model to make predictions
-        # let's do that in another function but for now we will just return the model
-        return lasso, df
+        # # plot the residuals
+        # plt.figure(figsize=(10, 10))
+        # plt.scatter(y_test_pred, y_test_pred - y_test, s=20)
+        # plt.xlabel('Predicted Price')
+        # plt.ylabel('Residuals')
+        # plt.title('Predicted vs Residuals')
+        # # residual lines
+        # plt.hlines(y=0, xmin=y_test_pred.min(),
+        #            xmax=y_test_pred.max(), color='red')
+        # # save the plot to a file in the plots folder
+        # plt.savefig(dir_path + 'out/predicted_vs_residuals.png')
 
 
-def test():
-    c = CropPricePredictor()
+# function to return the coeffecients and intercept of the model
 
-    date = '1980-01-01'
-    crop = 1  # 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
 
-    # run the predict() function
-    out = c.predict(date, crop)
+# def test():
+#     c = CropPriceLassoRegressor()
 
-    # strip the [], and round to two decimal places, add USD to the end
-    out = str(out).strip('[]')
-    out = round(float(out), 2)
-    out = str(out) + " USD"
+#     date = '1980-01-01'
+#     crop = 1  # 1 = corn, 2 = oats, 3 = soybeans, 4 = wheat
 
-    # this is the output:
-    print("Price:" + out)
+#     # run the predict() function
+#     out = c.predict(date, crop)
+
+#     # strip the [], and round to two decimal places, add USD to the end
+#     out = str(out).strip('[]')
+#     out = round(float(out), 2)
+#     out = str(out) + " USD"
+
+#     # this is the output:
+#     print("Price:" + out)
+
+
+# test()
