@@ -42,6 +42,10 @@ body {
   background-color: var(--secondary);
 }
 
+.card-border {
+  border: 2px solid var(--secondary);
+}
+
 .site-primary {
   color: var(--primary);
 }
@@ -52,4 +56,8 @@ body {
 
 .site-text {
   color: var(--text-color);
+}
+
+.flex .card {
+  flex-basis: calc(25% - 1rem)
 }
