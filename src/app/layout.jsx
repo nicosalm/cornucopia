@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Geologica, Lexend_Deca } from "next/font/google";
+import { Nav } from "@/app/nav";
 
 // body font
 const geologica = Geologica({ subsets: ["latin"] });
@@ -14,7 +15,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={lexend_deca.className}>{children}</body>
+      <body className={lexend_deca.className}>
+        {/* <Nav /> */}
+        {children}
+      </body>
     </html>
   );
 }

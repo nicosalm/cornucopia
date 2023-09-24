@@ -1,5 +1,5 @@
-import GroupPreview from "./GroupPreview";
-import Group from "./Group";
+import GroupPreview from "../dashboard/GroupPreview";
+import Group from "../dashboard/Group";
 import React, { useState } from "react";
 
 export default function ({ user }) {
