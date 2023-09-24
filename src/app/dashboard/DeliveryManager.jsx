@@ -21,7 +21,7 @@ export default function DeliveryManager({ data }) {
     // ... other farm locat ions
 ];
 
-const iconURL = "./src/assets/nico.png"; // Replace with your icon URL
+const iconURL = "./src/app/assets"; // Replace with your icon URL
   return (
     <div>
       <h1 id = "ScheduledDropOff">
