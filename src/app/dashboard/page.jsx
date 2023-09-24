@@ -1,14 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GroupCard from "./GroupCard";
+import Group from "./Group";
+import GroupPreview from "./GroupPreview";
 
 export default function Dashboard({ user }) {
-  
-  function rerenderDashboard() {
+  let prev = false;
+  useEffect(() => {
+    console.log(render.isPreview);
+    if(render.isPreview === true){
+        prev = true;
+    }
+  })
+  function rerenderDashboard(group) {
     console.log("Rerendering dashboard");
-    setGroups(true);
+    setGroups(...group);
   }
+  const[render, setRender] = useState({
+    isPreview: false,
+    isRender: false,
+    group: null
+  }
+  )
+  
+  function cardRenderer([preview, group]){
+    console.log(`in render: ${preview}`);
+    const newRender = {
+      
+      isPreview : preview,
+      isRender: true,
+      group: group
+    }
+    setRender(newRender);
+  }
+
   
   
   
@@ -50,14 +76,27 @@ export default function Dashboard({ user }) {
   // setGroups(getGroupsAssociatedWithUser(user._id));
 
   return (
+    <div>
     <div className="m-4 p-4 justify-center">
-      <h1 className="text-xl font-bold p-4">My Groups</h1>
+      <h1 className="text-xl font-bold p-4">Connect</h1>
       <div className="flex flex-wrap">
-          { groups.map((gr, idx) => <GroupCard group={gr} key={idx} func = {rerenderDashboard}/> ) }        
+          { groups.map((gr, idx) => <GroupCard group={gr} func1 = {rerenderDashboard} func2 = {cardRenderer} isPreview = {true}/>) }        
           <div className="card-border text-center rounded-lg p-6 m-4 bg-green-800 hover:bg-green-600 transition-colors">
             New group
           </div>
       </div>
     </div>
+    <div className="m-4 p-4 justify-center">
+      <h1 className="text-xl font-bold p-4">My Groups</h1>
+      <div className="flex flex-wrap">
+          { groups.map((gr, idx) => <GroupCard group={gr} func1 = {rerenderDashboard} func2={cardRenderer} isPreview = {false}/>) }        
+
+      </div>
+      </div>
+      { (render.isRender && render.isPreview === true) ? <GroupPreview data={render.group._id} func={rerenderDashboard} /> : null}
+      
+      { (render.isRender && !render.isPreview) ? <Group data={render.group} />:null}
+    </div>
+    
   );
 }
