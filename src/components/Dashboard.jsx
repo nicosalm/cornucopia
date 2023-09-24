@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import GroupCard from "./GroupCard";
-import Group from "./Group";
-import GroupPreview from "./GroupPreview";
+import GroupCard from "@/components/GroupCard";
+import Group from "@/components/Group";
+import GroupPreview from "@/components/GroupPreview";
 
 export default function Dashboard({ user }) {
   let prev = false;

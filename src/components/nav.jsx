@@ -10,7 +10,7 @@ export default function Nav() {
       </div>
       
       <div className="flex items-center">
-        <Link href="/dashboard" className="m-2 hover:text-green-400 transition-colors">Dashboard</Link>
+        <Link href="/" className="m-2 hover:text-green-400 transition-colors">Dashboard</Link>
         <Link href="/login" className="m-2 hover:text-green-400 transition-colors">Login</Link>
       </div>
     </nav>

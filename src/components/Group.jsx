@@ -1,17 +1,13 @@
+import ChartTabs from "./ChartTabs";
 import DeliveryManager from "./DeliveryManager";
 import React, { useState } from "react";
 export default function Group(group) {
   const [state, setState] = useState(group);
   return (
     <div>
-      <h1>
-        {" "}
-        This is a singular group component rendered. Group ID: {
-          group.GroupID
-        }{" "}
-      </h1>
-      <button onClick = {setState} > rerender Group.jsx </button>
+      <h1 className="text-6xl font-bold p-10" style={{ textAlign: "center" }}>Farmers Union</h1>
       {console.log("Group")}
+      <ChartTabs />
       <DeliveryManager data={group} />
     </div>
   );
