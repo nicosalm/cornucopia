@@ -110,6 +110,33 @@ def piechart(crops):
                 bbox_inches='tight', dpi=300, transparent=True)
 
 
+def set_line_chart_styles():
+    # let's make it look pretty with the following customizations
+    plt.rcParams['font.size'] = 20.0
+    plt.rcParams['font.weight'] = 'bold'
+    plt.rcParams['axes.labelweight'] = 'bold'
+    plt.rcParams['axes.titleweight'] = 'bold'
+    plt.rcParams['axes.titlesize'] = 20.0
+    plt.rcParams['axes.labelsize'] = 20.0
+    plt.rcParams['axes.titlepad'] = 20.0
+    plt.rcParams['axes.labelpad'] = 20.0
+    plt.rcParams['legend.fontsize'] = 20.0
+    plt.rcParams['legend.title_fontsize'] = 20.0
+    plt.rcParams['legend.title_fontsize'] = 20.0
+    plt.rcParams['legend.handlelength'] = 1.0
+    plt.rcParams['legend.handleheight'] = 1.0
+    plt.rcParams['legend.labelspacing'] = 1.0
+    plt.rcParams['legend.borderpad'] = 1.0
+    plt.rcParams['legend.edgecolor'] = 'black'
+    plt.rcParams['legend.fancybox'] = True
+    plt.rcParams['legend.framealpha'] = 0.5
+    plt.rcParams['legend.frameon'] = True
+    plt.rcParams['legend.markerscale'] = 1.0
+    plt.rcParams['legend.numpoints'] = 1.0
+    plt.rcParams['legend.scatterpoints'] = 1.0
+    plt.rcParams['text.color'] = 'white'
+
+
 def predicted_prices(model: model.CropPriceLassoRegressor, group_index: int):
 
     # let's get the dataframe for the group we want to predict prices for
@@ -173,34 +200,49 @@ def predicted_prices(model: model.CropPriceLassoRegressor, group_index: int):
     sns.set_style("whitegrid")
     sns.set_palette("pastel")
 
+    # Set the figure size
+    plt.figure(figsize=(10, 5))
+
     # Melt the dataframe for long-format plotting
     df_melted = df.reset_index().melt(id_vars='index', value_vars=[
         'corn', 'oats'], var_name='crop', value_name='price')
 
-    # Use FacetGrid with line plots for each crop
-    g = sns.FacetGrid(df_melted, col='crop', height=5,
-                      aspect=1.5)
-    g = g.map(plt.plot, 'index', 'price', marker="o", linewidth=2.5)
-    g = g.set_axis_labels("Date", "Predicted Price")
-    g.set_titles(col_template="{col_name} Prices")
-    g.set_xticklabels(rotation=45)
+    # Use a lineplot to plot the data with two lines
+    sns.lineplot(data=df_melted, x='index', y='price', hue='crop')
 
-    # Adjust details for aesthetics
-    plt.subplots_adjust(top=0.9)
-    g.fig.suptitle('Predicted Crop Prices Over Time', fontsize=16)
-    g.set_xticklabels(rotation=45, ha="right", fontsize=12)
-    g.set_yticklabels(fontsize=12)
-    g.set_axis_labels("Date", "Predicted Price", fontsize=14)
-    g.set_titles(fontsize=14)
+    set_line_chart_styles()
 
-    # Format x-axis for dates
-    for ax in g.axes.flat:
-        ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
+    # Set the x-axis to display dates
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=3))
 
-    plt.tight_layout()
-    plt.savefig(dir_path + 'out/projections.png',
-                bbox_inches='tight', dpi=300)
+    # Set color of the axis labels to white
+    plt.gca().tick_params(axis='x', colors='white')
+    plt.gca().tick_params(axis='y', colors='white')
+
+    # make the smooth lines thicker and more visible
+    plt.gca().lines[0].set_linewidth(4)
+    plt.gca().lines[1].set_linewidth(4)
+
+    # make x and y labels light gray
+    plt.gca().set_xlabel('Date', color='#d3d3d3')
+    plt.gca().set_ylabel('Price ($)', color='#d3d3d3')
+
+    # make title white
+    plt.gca().set_title('Predicted Crop Prices', color='white')
+
+    # Set the x-axis labels to be rotated 45 degrees
+    plt.xticks(rotation=45)
+
+    # Set the y-axis label
+    plt.ylabel('Price ($)')
+
+    # Set the title
+    plt.title('Predicted Crop Prices')
+
+    # Save the figure
+    plt.savefig(dir_path + 'out/linechart.png',
+                bbox_inches='tight', dpi=300, transparent=True)
 
 
 async def generate_charts(model: model.CropPriceLassoRegressor, group_index: int):

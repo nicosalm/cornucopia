@@ -1,3 +1,4 @@
+import ChartTabs from "./ChartTabs";
 import DeliveryManager from "./DeliveryManager";
 import React, { useState } from "react";
 
