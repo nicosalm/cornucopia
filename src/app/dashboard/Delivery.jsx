@@ -88,13 +88,13 @@ function Delivery(data) {
     <form onSubmit={handleContribution}>
       <div>
         {console.log(`${formData.deliveryName} ${formData.date} ${formData.location}`)}
-        <label>Delivery Name:</label>
+        <label>Delivery Name: </label>
         <input type="text" name="deliveryName" value={formData.deliveryName} onChange={handleInputChange} />
 
-        <label>Date:</label>
+        <label> Date: </label>
         <input type="date" name="date" value={formData.date} onChange={handleInputChange} />
 
-        <label>Location:</label>
+        <label> Location: </label>
         <input type="text" name="location" value={formData.location} onChange={handleInputChange} />
       </div>
       <div>

@@ -77,24 +77,24 @@ export default function Dashboard({ user }) {
 
   return (
     <div>
-    <div className="m-4 p-4 justify-center">
-      <h1 className="text-xl font-bold p-4">Connect</h1>
-      <div className="flex flex-wrap">
-          { groups.map((gr, idx) => <GroupCard group={gr} func1 = {rerenderDashboard} func2 = {cardRenderer} isPreview = {true}/>) }        
-          <div className="card-border text-center rounded-lg p-6 m-4 bg-green-800 hover:bg-green-600 transition-colors">
-            New group
-          </div>
-      </div>
+      <div className="m-4 p-16 text-center">
+        <h1 className="text-6xl font-bold p-10">Connect</h1>
+        <div className="flex flex-wrap">
+            { groups.map((gr, idx) => <GroupCard group={gr} func1 = {rerenderDashboard} func2 = {cardRenderer} isPreview = {true}/>) }        
+            <div className="card-border rounded-lg p-6 m-4 bg-green-800 hover:bg-green-600 transition-colors">
+              New group
+            </div>
+        </div>
     </div>
-    <div className="m-4 p-4 justify-center">
-      <h1 className="text-xl font-bold p-4">My Groups</h1>
+
+    <div className="m-4 p-16 justify-center">
+      <h1 className="text-6xl text-center font-bold p-10">My Groups</h1>
       <div className="flex flex-wrap">
           { groups.map((gr, idx) => <GroupCard group={gr} func1 = {rerenderDashboard} func2={cardRenderer} isPreview = {false}/>) }        
 
       </div>
-      </div>
+    </div>
       { (render.isRender && render.isPreview === true) ? <GroupPreview data={render.group._id} func={rerenderDashboard} /> : null}
-      
       { (render.isRender && !render.isPreview) ? <Group data={render.group} />:null}
     </div>
     

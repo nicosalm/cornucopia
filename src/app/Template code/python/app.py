@@ -29,9 +29,3 @@ async def main():
 
 
 asyncio.run(main())
-
-# we want to send a json update to the frontend when the graphs are generated
-# this is a bit of a hack, but it works for now
-
-with open(dir_path + 'pychart.json', 'rb') as f:
-    chart_json = pickle.load(f)
