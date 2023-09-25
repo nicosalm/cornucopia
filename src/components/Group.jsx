@@ -9,7 +9,7 @@ export default function Group(group) {
     { owner: "nico", crop: "corn", units: 30 },
     { owner: "lee", crop: "wheat", units: 20 },
     { owner: "jameson", crop: "barley", units: 10 },
-  ]);
+  ], []);
 
   const handleInputChange = ({ owner, crop, units }) => {
     setFormData([...formData, { owner, crop, units }]);
@@ -22,8 +22,29 @@ export default function Group(group) {
   return (
     <div>
       <ChartTabs/>
-        <DeliveryManager data = {group}/>
 
+    <form onSubmit={handleContribution}>
+      <div>
+        {console.log(
+          `${formData.deliveryName} ${formData.date} ${formData.location}`
+        )}
       </div>
+
+      <div>
+        <div>
+          <h4>Choose your crops to add or sell: </h4>
+          <div>
+            <select  placeholder="Crops">
+              <option>corn</option>
+              <option>wheat</option>
+              <option>barley</option>
+            </select>
+          </div>
+          <button type="submit">Contribute</button>
+        </div>
+      </div>
+    </form>
+    <DeliveryManager data = {group}/>
+    </div>
   );
 }
