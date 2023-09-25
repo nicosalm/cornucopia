@@ -1,3 +1,18 @@
+# Cornucopia
+HackUIowa 2023 - Winner, Best Agricultural Innovation by John Deere
+
+## Our mission
+Food insecurity is a problem, and access to nutrient rich produce has become challenging. We want to develop a robust framework for neighborhood gardners and small-scale farmers to collaborate. Cornucopia has a vision to enable local farmers to seamlessly connect and contribute to their community, bringing fresh food and good health to their neighbors.
+
+Check out the [elevator pitch](https://docs.google.com/presentation/d/1viTZ64X3tspTdhbMJkTuFAeLdAWS4yp6gxUb-3_VqyE/edit?usp=sharing) slideshow and our [Devpost](https://devpost.com/software/cornucopia-dwrymz?ref_content=user-portfolio&ref_feature=in_progress) 😎
+
+## Team members
+* [Christopher](https://github.com/birds-arnt-real)
+* [Jameson](https://github.com/calclb)
+* [Lee](https://github.com/wenjielee11)
+* [Nico](https://github.com/nico-himself)
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). Leverages React.js to seamlessly render components with dynamic states and TailWind.css to design a minimalistic template. 
 
 ## Getting Started
