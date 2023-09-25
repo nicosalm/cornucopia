@@ -23,30 +23,8 @@ export default function Group(group) {
     <div>
       <ChartTabs/>
  
-    <form onSubmit={handleContribution}>
-      <div>
-        {console.log(
-          `${formData.deliveryName} ${formData.date} ${formData.location}`
-        )}
-      </div>
-
-      <div>
-        <div>
-          <h4>Choose your crops to add or sell: </h4>
-          <div>
-            <select onChange={handleInputChange} placeholder="Crops">
-              <option>corn</option>
-              <option>wheat</option>
-              <option>barley</option>
-            </select>
-          </div>
-
-          <button type="submit">Contribute</button>
-        </div>
-        <DeliveryManager/>
+        <DeliveryManager data = {group}/>
 
       </div>
-    </form>
-    </div>
   );
 }

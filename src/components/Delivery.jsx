@@ -55,7 +55,8 @@ function Delivery(data) {
     });
   };
 
-  const handleJoin = () => {
+  const handleJoin = (e) => {
+    e.preventDefault;
     setIsJoining(true);
   };
 
