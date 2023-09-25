@@ -22,7 +22,6 @@ export default function Group(group) {
   return (
     <div>
       <ChartTabs/>
- 
         <DeliveryManager data = {group}/>
 
       </div>
