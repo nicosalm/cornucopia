@@ -6,7 +6,7 @@ import React, { useState, useEffect } from "react";
 
 function FarmMap({ farmLocations, iconURL, setDelivery}) {
     const [midPoint, setMidPoint] = useState();
-    
+    console.log("map loaded");
     useEffect(() => {
         if (farmLocations.length === 0) return;
 

@@ -94,6 +94,7 @@ export default function Dashboard({ user }) {
 
       </div>
     </div>
+    {console.log("rendering")}
       { (render.isRender && render.isPreview === true) ? <GroupPreview data={render.group._id} func={rerenderDashboard} /> : null}
       { (render.isRender && !render.isPreview) ? <Group data={render.group} />:null}
     </div>

@@ -20,6 +20,9 @@ export default function Group(group) {
   };
 
   return (
+    <div>
+      <ChartTabs/>
+ 
     <form onSubmit={handleContribution}>
       <div>
         {console.log(
@@ -40,7 +43,10 @@ export default function Group(group) {
 
           <button type="submit">Contribute</button>
         </div>
+        <DeliveryManager/>
+
       </div>
     </form>
+    </div>
   );
 }
