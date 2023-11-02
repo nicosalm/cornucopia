@@ -1,6 +1,8 @@
 # Cornucopia
 HackUIowa 2023 - Winner, Best Agricultural Innovation by John Deere
 
+[![wakatime](https://wakatime.com/badge/user/66fd5568-da32-466f-8a36-c16978837bac/project/0fcb339a-25f9-4e74-b86f-49b4ce37f0d8.svg)](https://wakatime.com/badge/user/66fd5568-da32-466f-8a36-c16978837bac/project/0fcb339a-25f9-4e74-b86f-49b4ce37f0d8)
+
 ## Our mission
 Food insecurity is a problem, and access to nutrient rich produce has become challenging. We want to develop a robust framework for neighborhood gardners and small-scale farmers to collaborate. Cornucopia has a vision to enable local farmers to seamlessly connect and contribute to their community, bringing fresh food and good health to their neighbors.
 
